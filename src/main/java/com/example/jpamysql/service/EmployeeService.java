@@ -21,15 +21,16 @@ public class EmployeeService {
     private DepartmentRepository departmentRepository;
 
     @Transactional
-    public void createDepartment(String name) {
+    public Department createDepartment(String name) {
         var department = new Department();
         department.setName(name);
-        departmentRepository.save(department);
+        Department saved = departmentRepository.save(department);
+        return saved;
     }
 
 
     @Transactional
-    public void createEmployee(String name, double salary, String departmentName, Address address) {
+    public Employee createEmployee(String name, double salary, String departmentName, Address address) {
         var department = departmentRepository.findByName(departmentName);
         if (department == null) {
             throw new RuntimeException("Department not found: " + departmentName);
@@ -39,7 +40,8 @@ public class EmployeeService {
         employee.setDepartment(department);
         employee.setSalary(salary);
         employee.setAddress(address);
-        employeeRepository.save(employee);
+        Employee saved = employeeRepository.save(employee);
+        return saved;
     }
 
     @Transactional
@@ -53,16 +55,20 @@ public class EmployeeService {
     }
 
     @Transactional
-    public void increaseEmployeeSalary(String name, double percentage) {
+    public Employee increaseEmployeeSalary(String name, double percentage) {
+        // employee name should have been made unique, but that is left as an exercise for the student :)
         List<Employee> employees = employeeRepository.findByName(name);
-        for (Employee employee : employees) {
-            double newSalary = employee.getSalary() * (1 + percentage / 100);
-            employee.setSalary(newSalary);
-
-            // you dont need to save since the employee is managed by the persistence context,
-            // it will be automatically saved when the transaction commits.
-            //employeeRepository.save(employee);
+        if (employees.isEmpty()) {
+            throw new RuntimeException("Employee not found: " + name);
         }
+        Employee employee = employees.get(0);
+        double newSalary = employee.getSalary() * (1 + percentage / 100);
+        employee.setSalary(newSalary);
+
+        // you dont need to save since the employee is managed by the persistence context,
+        // it will be automatically saved when the transaction commits.
+        //employeeRepository.save(employee);
+        return employee;
     }
 
     @Transactional
