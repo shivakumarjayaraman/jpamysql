@@ -1,0 +1,8 @@
+This project requires a MySQL DB configured on the local machine. Please take a look at the script directory where i create the database. 
+
+We can use spring properties to set up the initial database. Please fix these settings before you evolve this project (since the DDL will be run everytime Spring initializes). Take a look at src/main/resources/application.properties file. 
+
+spring.jpa.hibernate.ddl-auto=create
+spring.jpa.show-sql=true
+
+Read this project in tandem with jpah2 which is the same code but uses h2 database (easier to experiment)
